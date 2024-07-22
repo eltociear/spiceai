@@ -1129,4 +1129,50 @@ mod tests {
             panic!("Unexpected error");
         }
     }
+
+    const TEST_PARAMS_1: &[ParameterSpec] = &[
+        ParameterSpec::connector("connector_param"),
+        ParameterSpec::runtime("runtime_param"),
+    ];
+
+    #[tokio::test]
+    async fn test_connector_and_runtime_parameters() {
+        let mut params = HashMap::new();
+        params.insert(
+            "test_connector_param".to_string(),
+            SecretString::from_str("connector").expect("valid secret"),
+        );
+        params.insert(
+            "runtime_param".to_string(),
+            SecretString::from_str("runtime").expect("valid secret"),
+        );
+
+        let params = Parameters::try_new(
+            "test",
+            params.into_iter().collect(),
+            "test",
+            Arc::new(RwLock::new(Secrets::new())),
+            TEST_PARAMS_1,
+        )
+        .await
+        .expect("valid parameters");
+
+        assert_eq!(
+            params
+                .get("connector_param")
+                .expose()
+                .ok()
+                .expect("a connector parameter"),
+            "connector"
+        );
+
+        assert_eq!(
+            params
+                .get("runtime_param")
+                .expose()
+                .ok()
+                .expect("a runtime parameter"),
+            "runtime"
+        );
+    }
 }
