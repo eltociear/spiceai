@@ -55,9 +55,9 @@ jobs:
         sudo apt-get install unixodbc unixodbc-dev -y
     
     - name: Install missing tools (Mac)
-        if: matrix.target_os == 'darwin'
-        run: |
-          brew install unixodbc
+      if: matrix.target_os == 'darwin'
+      run: |
+        brew install unixodbc
 
     - name: install Spice (https://install.spiceai.org)
       if : matrix.target_os != 'windows'
