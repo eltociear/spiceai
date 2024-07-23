@@ -90,6 +90,17 @@ checkJqInstalled() {
     fi
 }
 
+checkOdbcInstalled() {
+    if ! type "odbcinst" 1> /dev/null 2>&1; then
+        echo "'unixodbc' is required"
+        echo
+        echo "To install (OSX): 'brew install unixodbc'"
+        echo "To install (Ubuntu): 'apt install unixodbc unixodbc-dev'"
+        echo
+        exit 1
+    fi
+}
+
 getLatestRelease() {
     local spiceReleaseUrl="https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}/releases/latest"
     local latest_release=""
@@ -196,6 +207,7 @@ getSystemInfo
 verifySupported
 checkHttpRequestCLI
 checkJqInstalled
+checkOdbcInstalled
 
 if [ -z "$1" ]; then
     echo "Getting the latest Spice.ai Runtime..."
