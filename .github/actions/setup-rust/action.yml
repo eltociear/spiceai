@@ -77,16 +77,16 @@ runs:
       run: |
         brew install sccache
     
-    - name: Configure sccache
-      if: inputs.os == 'linux' || inputs.os == 'darwin'
-      shell: bash
-      env:
-        AWS_ACCESS_KEY_ID: todo
-        AWS_SECRET_ACCESS_KEY: todo
-      run: |
-        mkdir -p $HOME/.config/sccache
-        cp .config/sccache/config $HOME/.config/sccache/config
-        sccache --start-server
+    # - name: Configure sccache
+    #   if: inputs.os == 'linux' || inputs.os == 'darwin'
+    #   shell: bash
+    #   env:
+    #     AWS_ACCESS_KEY_ID: todo
+    #     AWS_SECRET_ACCESS_KEY: todo
+    #   run: |
+    #     mkdir -p $HOME/.config/sccache
+    #     cp .config/sccache/config $HOME/.config/sccache/config
+    #     sccache --start-server
     
     - name: Configure Cargo
       if: inputs.os == 'linux' || inputs.os == 'darwin'
