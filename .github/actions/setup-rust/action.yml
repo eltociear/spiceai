@@ -93,4 +93,4 @@ runs:
       shell: bash
       run: |
         mkdir -p $HOME/.cargo
-        cp .cargo/config $HOME/.cargo/config
+        cp .config/cargo/config $HOME/.cargo/config
