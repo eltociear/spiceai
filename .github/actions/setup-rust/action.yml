@@ -65,7 +65,7 @@ runs:
         sudo mv sccache-v0.8.1-i686-unknown-linux-musl/sccache /usr/bin/sccache
     
     - name: Install sccache (Linux ARM)
-      if: inputs.os == 'linux' && runner.arch == 'X64'
+      if: inputs.os == 'linux' && runner.arch == 'ARM64'
       shell: bash
       run: |
         wget https://github.com/mozilla/sccache/releases/download/v0.8.1/sccache-v0.8.1-aarch64-unknown-linux-musl.tar.gz
@@ -93,6 +93,7 @@ runs:
         mkdir -p $HOME/.config/sccache
         cp .config/sccache/config $HOME/.config/sccache/config
         sccache --start-server
+        sccache --show-stats
     
     - name: Configure Cargo
       if: inputs.os == 'linux' || inputs.os == 'darwin'
