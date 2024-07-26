@@ -5,6 +5,12 @@ inputs:
     description: 'Operating system to set up the toolchain for'
     default: 'linux' # 'linux', 'darwin', 'windows'
     required: true
+  AWS_ACCESS_KEY_ID:
+    description: 'AWS access key ID'
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: 'AWS secret access key'
+    required: true
 
 runs:
   using: "composite"
@@ -81,6 +87,9 @@ runs:
     - name: Configure sccache
       if: inputs.os == 'linux' || inputs.os == 'darwin'
       shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
       run: |
         if pgrep sccache > /dev/null
         then
