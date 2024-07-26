@@ -1,5 +1,3 @@
-[cache.s3]
-bucket = 'spiceai-sandpit-sccache'
-region = 'us-east-2'
-use_ssl = true
-no_credentials = false
+[cache.disk]
+dir = "/tmp/.cache/sccache"
+size = 16106127360
