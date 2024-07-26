@@ -62,7 +62,7 @@ runs:
       run: |
         wget https://github.com/mozilla/sccache/releases/download/v0.8.1/sccache-v0.8.1-i686-unknown-linux-musl.tar.gz
         tar -xvf sccache-v0.8.1-i686-unknown-linux-musl.tar.gz
-        sudo mv sccache-v0.8.1-i686-unknown-linux-musl/sccache /usr/bin/sccache
+        sudo cp sccache-v0.8.1-i686-unknown-linux-musl/sccache /usr/bin/sccache
     
     - name: Install sccache (Linux ARM)
       if: inputs.os == 'linux' && runner.arch == 'ARM64'
@@ -70,7 +70,7 @@ runs:
       run: |
         wget https://github.com/mozilla/sccache/releases/download/v0.8.1/sccache-v0.8.1-aarch64-unknown-linux-musl.tar.gz
         tar -xvf sccache-v0.8.1-aarch64-unknown-linux-musl.tar.gz
-        sudo mv sccache-v0.8.1-aarch64-unknown-linux-musl/sccache /usr/bin/sccache
+        sudo cp sccache-v0.8.1-aarch64-unknown-linux-musl/sccache /usr/bin/sccache
 
     - name: Install sccache (macOS)
       if: inputs.os == 'darwin'
