@@ -84,7 +84,6 @@ runs:
         AWS_ACCESS_KEY_ID: todo
         AWS_SECRET_ACCESS_KEY: todo
       run: |
-        sccache --stop-server
         rm -rf $HOME/.config/sccache/config
     
     - name: Configure Cargo
