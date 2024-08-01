@@ -43,7 +43,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          export PATH=$PATH:$HOME/go/bin
+          export PATH=$PATH:$HOME/go/bin:$HOME/.cargo/bin
           make lint
 
       - name: Check if Cargo.lock is updated
