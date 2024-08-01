@@ -13,18 +13,18 @@ on:
 jobs:
   lint:
     name: Run Go & Rust Linters
-    runs-on: ubuntu-latest-16-cores
-    env:
-      GOVER: 1.22.0
+    runs-on: aws-rust
+    # env:
+    #   GOVER: 1.22.0
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GOVER }}
-          cache: false
+      # - name: Set up Go
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: ${{ env.GOVER }}
+      #     cache: false
 
       - name: Install golangci-lint
         run: |
@@ -32,19 +32,22 @@ jobs:
             curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
           fi
 
-      - name: Set up Rust
-        uses: ./.github/actions/setup-rust
-        with:
-          os: 'linux'
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ATHENA_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_ATHENA_SECRET_ACCESS_KEY }}
+      # - name: Set up Rust
+      #   uses: ./.github/actions/setup-rust
+      #   with:
+      #     os: 'linux'
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ATHENA_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_ATHENA_SECRET_ACCESS_KEY }}
       
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: make lint
+      - run: |
+          export PATH=$PATH:$HOME/go/bin:$HOME/.cargo/bin
+          export CARGO_NET_GIT_FETCH_WITH_CLI=true
+          make OPT_LEVEL=ci-dev lint
 
       - name: Check if Cargo.lock is updated
         run: |
@@ -57,27 +60,30 @@ jobs:
 
   build:
     name: Build Go & Rust
-    runs-on: ubuntu-latest-16-cores
-    env:
-      GOVER: 1.22.0
+    runs-on: aws-rust
+    # env:
+    #   GOVER: 1.22.0
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ env.GOVER }}
-          cache: false
+      # - name: Set up Go
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: ${{ env.GOVER }}
+      #     cache: false
 
-      - name: Set up Rust
-        uses: ./.github/actions/setup-rust
-        with:
-          os: 'linux'
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ATHENA_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_ATHENA_SECRET_ACCESS_KEY }}
+      # - name: Set up Rust
+      #   uses: ./.github/actions/setup-rust
+      #   with:
+      #     os: 'linux'
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ATHENA_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_ATHENA_SECRET_ACCESS_KEY }}
 
-      - run: make OPT_LEVEL=ci-dev ci test
+      - run: |
+          export PATH=$PATH:$HOME/go/bin:$HOME/.cargo/bin
+          export CARGO_NET_GIT_FETCH_WITH_CLI=true
+          make OPT_LEVEL=ci-dev ci test
 
   # build-docker:
   #   name: Build Docker Image
