@@ -44,6 +44,7 @@ jobs:
 
       - run: |
           export PATH=$PATH:$HOME/go/bin:$HOME/.cargo/bin
+          export CARGO_NET_GIT_FETCH_WITH_CLI=true
           make lint
 
       - name: Check if Cargo.lock is updated
