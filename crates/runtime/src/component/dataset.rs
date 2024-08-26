@@ -387,6 +387,15 @@ impl Dataset {
     }
 
     #[must_use]
+    pub fn is_accelerated_with_engine(&self, engine: Engine) -> bool {
+        if let Some(acceleration) = &self.acceleration {
+            return acceleration.enabled && acceleration.engine == engine;
+        }
+
+        false
+    }
+
+    #[must_use]
     pub fn is_file_accelerated(&self) -> bool {
         if let Some(acceleration) = &self.acceleration {
             if acceleration.engine == Engine::PostgreSQL {

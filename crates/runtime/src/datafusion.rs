@@ -20,7 +20,7 @@ use std::time::Duration;
 
 use crate::accelerated_table::refresh;
 use crate::accelerated_table::{refresh::Refresh, AcceleratedTable, Retention};
-use crate::component::dataset::acceleration::RefreshMode;
+use crate::component::dataset::acceleration::{Engine, RefreshMode};
 use crate::component::dataset::{Dataset, Mode};
 use crate::dataaccelerator::{self, create_accelerator_table};
 use crate::dataconnector::sink::SinkConnector;
@@ -411,16 +411,21 @@ impl DataFusion {
                         "Registering dataset {dataset:?} with preloaded accelerated table"
                     );
 
-                    self.ctx
-                        .register_table(
-                            dataset_table_ref.clone(),
+                    if dataset.is_accelerated_with_engine(Engine::DuckDB) {
+                        // acceleration federation is explicitly disabled for DuckDB due to instability
+                        self.ctx
+                            .register_table(dataset.name.clone(), Arc::new(accelerated_table))
+                    } else {
+                        self.ctx.register_table(
+                            dataset.name.clone(),
                             Arc::new(
                                 Arc::new(accelerated_table)
                                     .create_federated_table_provider()
                                     .context(UnableToRegisterTableToDataFusionSnafu)?,
                             ),
                         )
-                        .context(UnableToRegisterTableToDataFusionSnafu)?;
+                    }
+                    .context(UnableToRegisterTableToDataFusionSnafu)?;
                 } else if source.as_any().downcast_ref::<SinkConnector>().is_some() {
                     // Sink connectors don't know their schema until the first data is received. Park this registration until the schema is known via the first write.
                     self.pending_sink_tables
@@ -778,8 +783,12 @@ impl DataFusion {
             .create_accelerated_table(&dataset, Arc::clone(&source), federated_read_table, secrets)
             .await?;
 
-        self.ctx
-            .register_table(
+        if dataset.is_accelerated_with_engine(Engine::DuckDB) {
+            // acceleration federation is explicitly disabled for DuckDB due to instability
+            self.ctx
+                .register_table(dataset.name.clone(), Arc::new(accelerated_table))
+        } else {
+            self.ctx.register_table(
                 dataset.name.clone(),
                 Arc::new(
                     Arc::new(accelerated_table)
@@ -787,7 +796,8 @@ impl DataFusion {
                         .context(UnableToRegisterTableToDataFusionSnafu)?,
                 ),
             )
-            .context(UnableToRegisterTableToDataFusionSnafu)?;
+        }
+        .context(UnableToRegisterTableToDataFusionSnafu)?;
 
         self.register_metadata_table(&dataset, Arc::clone(&source))
             .await?;
